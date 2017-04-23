@@ -10,7 +10,7 @@ class NegociacaoController {
         this._listaNegociacoes = new BindHelper (
                 new ListaNegociacoes(),
                 new NegociacoesView($('#negociacoesView')),
-                'adiciona', 'esvazia');
+                'adiciona', 'esvazia', 'ordena');
         
         this._mensagem = new BindHelper(
             new Mensagem(),
@@ -51,6 +51,10 @@ class NegociacaoController {
     apaga() {
         this._listaNegociacoes.esvazia();
         this._mensagem.texto = 'Lista de negociações apagada com sucesso!';
+    }
+
+    ordena(coluna) {
+        this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]);    
     }
 
 }
