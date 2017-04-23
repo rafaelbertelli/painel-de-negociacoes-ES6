@@ -3,6 +3,8 @@ class NegociacaoController {
     constructor() {
         let $ = document.querySelector.bind(document);
 
+        this._ordemAtual = '';
+
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
@@ -10,7 +12,7 @@ class NegociacaoController {
         this._listaNegociacoes = new BindHelper (
                 new ListaNegociacoes(),
                 new NegociacoesView($('#negociacoesView')),
-                'adiciona', 'esvazia', 'ordena');
+                'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
         
         this._mensagem = new BindHelper(
             new Mensagem(),
@@ -20,9 +22,14 @@ class NegociacaoController {
     
     adiciona(event) {
         event.preventDefault();
-        this._listaNegociacoes.adiciona(this._criaNegociacao());
-        this._mensagem.texto = 'Negociação adicionada com sucesso';
-        this._limpaFormulario();   
+
+        try {
+            this._listaNegociacoes.adiciona(this._criaNegociacao());
+            this._mensagem.texto = 'Negociação adicionada com sucesso';
+            this._limpaFormulario();   
+        } catch (error) {
+            this._mensagem.texto = error;
+        }
     }
 
     importaNegociacoes() {
@@ -54,7 +61,12 @@ class NegociacaoController {
     }
 
     ordena(coluna) {
-        this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]);    
+        if(this._ordemAtual == coluna) {
+            this._listaNegociacoes.inverteOrdem();
+        } else {
+            this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]);
+        }
+        this._ordemAtual = coluna;
     }
 
 }
